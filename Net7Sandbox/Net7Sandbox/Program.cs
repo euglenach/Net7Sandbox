@@ -130,11 +130,19 @@ record Cla();
 
 struct S
 {
-    private int i = 0;
-    private string str = $"";
+    private int i = 111;
+    private string str = $"aaaa";
 
     public S()
     {
+        i = 123;
+        str = "bbbbb";
+    }
+
+    public S(int i, string str)
+    {
+        this.i = i;
+        this.str = str;
     }
 }
 
