@@ -1,6 +1,7 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using System.Numerics;
+using static iostream;
 
 Console.WriteLine(Sum(1,2,3,4,5,6,7,8,9));
 Console.WriteLine(Sum2(1,2,3,4,5,6,7,8,9));
@@ -15,10 +16,19 @@ Console.WriteLine(Radix<nuint>());
 Console.WriteLine(Radix<long>());
 
 ReadOnlySpan<byte> utf8 = "aaaaa"u8;
-utf8 = "aaaaa"u8 + "bbbbb"u8 + "ccccc"u8; 
+utf8 = "a"u8 + "b"u8 + "c"u8; 
 Console.WriteLine("aaaaa"u8.Length);
 Console.WriteLine(utf8.Length);
 Console.WriteLine(IsAbcBytes(utf8));
+
+1.M(); // ここのファイル内だけの拡張メソッド
+
+Console.WriteLine(LogicalLeftShift(1, 4));
+Console.WriteLine(LogicalLeftShift((byte)1, 4));
+Console.WriteLine(LogicalLeftShift((short)1, 14));
+Console.WriteLine(LogicalLeftShift((ushort)1, 15));
+
+_ = cout << "Hello World!" << endl;
 
 var b = Random.Shared.Next() % 2 == 0;
 var u8 = b? "abc"u8 : stackalloc byte[]{97, 98, 99};
@@ -79,8 +89,6 @@ ReadOnlySpan<byte> utf8Json = """
     }
     """u8; // utf8もできる
 
-1.M(); // ここのファイル内だけの拡張メソッド
-
 
 T Sum<T>(params T[] sources) where T : INumber<T>
 {
@@ -103,6 +111,16 @@ int Radix<T>() where T : INumber<T>
 {
     return T.Radix;
 }
+
+T Zero<T>() where T : INumber<T>
+{
+    return T.Zero;
+}
+
+static T LogicalLeftShift<T>(T s, int bits)
+    where T : IShiftOperators<T,int,T>
+    => s << bits;
+
 
 bool IsAbcChars(ReadOnlySpan<char> x) => x is "abc";
 bool IsAbcBytes(ReadOnlySpan<byte> x) => x is [ 97, 98, 99 ];
@@ -128,4 +146,18 @@ ref struct ByReference<T>
 file static class Extensions
 {
     public static void M(this int x) => Console.WriteLine(x);
+}
+
+public static class iostream
+{
+    public static readonly ConsoleOut cout = new();
+    public static readonly ConsoleEndLine endl = new();
+
+    public struct ConsoleOut
+    {
+        public static ConsoleOut operator <<(ConsoleOut x, string value) { Console.Write(value); return x; }
+        public static ConsoleOut operator <<(ConsoleOut x, ConsoleEndLine _) { Console.WriteLine(); return x; }
+    }
+
+    public struct ConsoleEndLine { }
 }
